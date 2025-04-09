@@ -177,35 +177,45 @@ struct BetanoCreateTimerView: View {
                         
                         Spacer(minLength: 80)
                         
+                        Text("Cost: 100 points")
+                            .Bak(size: 20)
+                        
                         Button(action: {
                             if betanoCreateTimerModel.nameTimer.isEmpty {
                                 alertMessage = "Please enter timer name"
                                 showAlert = true
                             } else {
-                                let userDefaultsManager = UserDefaultsManager()
-                                
-                                var selectedCategory: CategoryTimer = .sports
-                                if betanoCreateTimerModel.isSport {
-                                    selectedCategory = .sports
-                                } else if betanoCreateTimerModel.isWork {
-                                    selectedCategory = .work
+                                if UserDefaults.standard.integer(forKey: "points") >= 100 {
+                                    let userDefaultsManager = UserDefaultsManager()
+                                    
+                                    var selectedCategory: CategoryTimer = .sports
+                                    if betanoCreateTimerModel.isSport {
+                                        selectedCategory = .sports
+                                    } else if betanoCreateTimerModel.isWork {
+                                        selectedCategory = .work
+                                    } else {
+                                        selectedCategory = .other
+                                    }
+                                    
+                                    var selectedIcon: IconTimer = .basket
+                                    if betanoCreateTimerModel.isIcon1 {
+                                        selectedIcon = .showIcon2
+                                    } else if betanoCreateTimerModel.isIcon2 {
+                                        selectedIcon = .showIcon1
+                                    } else {
+                                        selectedIcon = .showIcon3
+                                    }
+                                    
+                                    let newTimer = TimerModel(name: betanoCreateTimerModel.nameTimer, category: selectedCategory, icon: selectedIcon, hour: String(hours), minute: String(minutes))
+                                    
+                                    userDefaultsManager.appendTimer(newTimer)
+                                    UserDefaultsManager().addPoints(-100)
+                                    presentationMode.wrappedValue.dismiss()
+                                    
                                 } else {
-                                    selectedCategory = .other
+                                    alertMessage = "You don't have enough points"
+                                    showAlert = true
                                 }
-                                
-                                var selectedIcon: IconTimer = .basket
-                                if betanoCreateTimerModel.isIcon1 {
-                                    selectedIcon = .showIcon2
-                                } else if betanoCreateTimerModel.isIcon2 {
-                                    selectedIcon = .showIcon1
-                                } else {
-                                    selectedIcon = .showIcon3
-                                }
-                                
-                                let newTimer = TimerModel(name: betanoCreateTimerModel.nameTimer, category: selectedCategory, icon: selectedIcon, hour: String(hours), minute: String(minutes))
-                                
-                                userDefaultsManager.appendTimer(newTimer)
-                                presentationMode.wrappedValue.dismiss()
                             }
                         }) {
                             Rectangle()

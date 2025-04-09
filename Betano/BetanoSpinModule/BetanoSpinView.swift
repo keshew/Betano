@@ -4,6 +4,7 @@ struct BetanoSpinView: View {
     @StateObject var betanoSpinModel = BetanoSpinViewModel()
     @State private var isSpinning = false
     @State private var spinAngle: Angle = .zero
+    @State private var canSpinToday: Bool = true
     
     var body: some View {
         GeometryReader { geometry in
@@ -63,7 +64,7 @@ struct BetanoSpinView: View {
                                         Text("Spins Left")
                                             .Bak(size: 14, color: .secondLabel)
                                         
-                                        Text("\(UserDefaults.standard.integer(forKey: "countWheel"))")
+                                        Text(canSpinToday ? "1" : "0")
                                             .Bak(size: 20)
                                     }
                                 }
@@ -88,27 +89,27 @@ struct BetanoSpinView: View {
                         
                         Spacer(minLength: 190)
                         
-                        if UserDefaults.standard.integer(forKey: "countWheel") > 0 {
-                            if !isSpinning {
-                                Button(action: {
-                                    spinWheel()
-                                }) {
-                                    Rectangle()
-                                        .fill(.mainOrange)
-                                        .frame(height: 60)
-                                        .cornerRadius(16)
-                                        .padding(.horizontal)
-                                        .overlay {
-                                            Text("SPIN NOW")
-                                                .Bak(size: 18)
-                                        }
-                                }
+                        
+                        if canSpinToday && !isSpinning {
+                            Button(action: {
+                                spinWheel()
+                            }) {
+                                Rectangle()
+                                    .fill(.mainOrange)
+                                    .frame(height: 60)
+                                    .cornerRadius(16)
+                                    .padding(.horizontal)
+                                    .overlay {
+                                        Text("SPIN NOW")
+                                            .Bak(size: 18)
+                                    }
                             }
                         }
                     }
                     .padding(.top)
                 }
             }
+            .onAppear(perform: checkSpinAvailability)
             .fullScreenCover(isPresented: $betanoSpinModel.isHome) {
                 BetanoTabBarView()
             }
@@ -150,11 +151,19 @@ struct BetanoSpinView: View {
             
             let currentPoints = UserDefaults.standard.integer(forKey: "points")
             UserDefaults.standard.set(currentPoints + pointsToAdd, forKey: "points")
-            
             isSpinning = false
-            UserDefaultsManager().decrementCountWheel()
+            UserDefaults.standard.set(Date(), forKey: "lastSpinDate")
+            checkSpinAvailability()
             betanoSpinModel.updateScreen = 0
-            UserDefaultsManager().updateCountWheel()
+        }
+    }
+    
+    func checkSpinAvailability() {
+        if let lastSpinDate = UserDefaults.standard.object(forKey: "lastSpinDate") as? Date,
+           Calendar.current.isDateInToday(lastSpinDate) {
+            canSpinToday = false
+        } else {
+            canSpinToday = true
         }
     }
 }
