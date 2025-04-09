@@ -9,6 +9,4 @@ class BetanoCreateTimerViewModel: ObservableObject {
     @Published var isIcon1 = true
     @Published var isIcon2 = false
     @Published var isIcon3 = false
-    @Published var date = Date()
-    @Published var time = Date()
 }

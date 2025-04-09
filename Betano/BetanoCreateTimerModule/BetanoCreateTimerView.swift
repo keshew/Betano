@@ -5,7 +5,8 @@ struct BetanoCreateTimerView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var showAlert = false
     @State private var alertMessage = ""
-    
+    @State var minutes = 0
+    @State var hours = 0
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -167,9 +168,10 @@ struct BetanoCreateTimerView: View {
                             }
                             
                             HStack(spacing: 25) {
-                                DateTF(date: $betanoCreateTimerModel.date)
+                                DateTF(hour: $hours)
                                 
-                                TimeTF(time: $betanoCreateTimerModel.time)
+                                TimeTF(minutes: $minutes)
+                                
                             }
                         }
                         
@@ -200,11 +202,7 @@ struct BetanoCreateTimerView: View {
                                     selectedIcon = .showIcon3
                                 }
                                 
-                                let calendar = Calendar.current
-                                let hour = String(calendar.component(.hour, from: betanoCreateTimerModel.date))
-                                let minute = String(calendar.component(.minute, from: betanoCreateTimerModel.time))
-                                
-                                let newTimer = TimerModel(name: betanoCreateTimerModel.nameTimer, category: selectedCategory, icon: selectedIcon, hour: hour, minute: minute)
+                                let newTimer = TimerModel(name: betanoCreateTimerModel.nameTimer, category: selectedCategory, icon: selectedIcon, hour: String(hours), minute: String(minutes))
                                 
                                 userDefaultsManager.appendTimer(newTimer)
                                 presentationMode.wrappedValue.dismiss()
@@ -241,4 +239,84 @@ struct BetanoCreateTimerView: View {
 
 #Preview {
     BetanoCreateTimerView()
+}
+
+struct DateTF: View {
+    @Binding var hour: Int
+
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .fill(.secondMain)
+                .frame(height: 88)
+                .cornerRadius(12)
+                .overlay {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Hours")
+                                .Bak(size: 12, color: .secondLabel)
+                            
+                            Text("\(hour)")
+                                .Bak(size: 24)
+                        }
+                        .padding(.leading, 15)
+                        
+                        Spacer()
+                    }
+                }
+            
+            Picker(selection: $hour, label: Text("Hours")) {
+                ForEach(0..<24) { min in
+                    Text("\(min) hour").tag(min)
+                        
+                }
+            }
+            .frame(height: 88)
+            .colorMultiply(.clear)
+        }
+        .labelsHidden()
+        .frame(height: 88)
+        .padding(.leading)
+    }
+}
+
+
+struct TimeTF: View {
+    @Binding var minutes: Int
+    var body: some View {
+        VStack {
+            ZStack {
+                Rectangle()
+                    .fill(.secondMain)
+                    .frame(height: 88)
+                    .cornerRadius(12)
+                    .overlay {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Minutes")
+                                    .Bak(size: 12, color: .secondLabel)
+                                
+                                Text("\(minutes)")
+                                    .Bak(size: 24)
+                            }
+                            .padding(.leading, 15)
+                            
+                            Spacer()
+                        }
+                    }
+                
+                Picker(selection: $minutes, label: Text("Minutes")) {
+                    ForEach(0..<60) { min in
+                        Text("\(min) minutes").tag(min)
+                            
+                    }
+                }
+                .frame(height: 88)
+                .colorMultiply(.clear)
+            }
+            .labelsHidden()
+            .frame(height: 88)
+        }
+        .padding(.trailing)
+    }
 }
