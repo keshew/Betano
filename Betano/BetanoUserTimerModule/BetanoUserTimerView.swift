@@ -5,6 +5,16 @@ struct BetanoUserTimerView: View {
     @Environment(\.presentationMode) var presentationMode
     var model: TimerModel
     
+    func saveTimer() {
+        let data = StatData(timeDid: betanoUserTimerModel.totalSeconds,
+                            totalTime: model.hour + model.minute,
+                            points: betanoUserTimerModel.points,
+                            activiry: model.name,
+                            image: model.icon.rawValue)
+        
+        UserDefaultsManager().add(data)
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             if betanoUserTimerModel.isTimerEnd {
@@ -80,6 +90,9 @@ struct BetanoUserTimerView: View {
                             }
                     }
                     .padding(.top)
+                }
+                .onAppear {
+                    saveTimer()
                 }
                 .fullScreenCover(isPresented: $betanoUserTimerModel.isBackHome) {
                     BetanoTabBarView()

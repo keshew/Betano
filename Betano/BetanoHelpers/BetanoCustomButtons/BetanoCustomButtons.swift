@@ -46,6 +46,7 @@ struct CustomTabBar: View {
     
     enum TabType: Int {
         case Home
+        case Stats
         case Settings
         case Profile
     }
@@ -55,15 +56,16 @@ struct CustomTabBar: View {
             ZStack {
                 Rectangle()
                     .fill(.secondMain)
-                    .frame(width: 280, height: 70)
+                    .frame(width: 370, height: 70)
                     .cornerRadius(30)
                     .edgesIgnoringSafeArea(.bottom)
             }
             
             HStack(spacing: 50) {
                 TabBarItem(imageName: "tab1", tab: .Home, selectedTab: $selectedTab)
-                TabBarItem(imageName: "tab2", tab: .Settings, selectedTab: $selectedTab)
-                TabBarItem(imageName: "tab3", tab: .Profile, selectedTab: $selectedTab)
+                TabBarItem(imageName: "tab2", tab: .Stats, selectedTab: $selectedTab)
+                TabBarItem(imageName: "tab3", tab: .Settings, selectedTab: $selectedTab)
+                TabBarItem(imageName: "tab4", tab: .Profile, selectedTab: $selectedTab)
             }
             .padding(.top, -5)
             .frame(height: 60)

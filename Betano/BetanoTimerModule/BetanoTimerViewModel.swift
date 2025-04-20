@@ -76,4 +76,6 @@ class BetanoTimerViewModel: ObservableObject {
         timer?.invalidate()
         configureTimer(time: time)
     }
+    
+  
 }

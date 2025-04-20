@@ -2,7 +2,8 @@ import SwiftUI
 
 struct BetanoCreateAccountView: View {
     @StateObject var betanoCreateAccountModel = BetanoCreateAccountViewModel()
-    @Environment(\.presentationMode) var presentationMode
+    @State var isOb = false
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -13,7 +14,7 @@ struct BetanoCreateAccountView: View {
                     VStack {
                         HStack {
                             Button(action: {
-                                presentationMode.wrappedValue.dismiss()
+                                isOb = true
                             }) {
                                 Image(.arrowLeft)
                                     .resizable()
@@ -139,6 +140,10 @@ struct BetanoCreateAccountView: View {
             
             .fullScreenCover(isPresented: $betanoCreateAccountModel.isLogIn) {
                 BetanoLogInView()
+            }
+            
+            .fullScreenCover(isPresented: $isOb) {
+                BetanoOnboardingView()
             }
             
             .fullScreenCover(isPresented: $betanoCreateAccountModel.isGuest) {

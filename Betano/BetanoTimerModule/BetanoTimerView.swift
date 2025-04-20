@@ -5,6 +5,16 @@ struct BetanoTimerView: View {
     @Environment(\.presentationMode) var presentationMode
     var model: TimerModel
     
+    func saveTimer() {
+        let data = StatData(timeDid: betanoTimerModel.totalSeconds,
+                            totalTime: model.hour + model.minute,
+                            points: betanoTimerModel.points,
+                            activiry: model.name,
+                            image: model.icon.rawValue)
+        
+        UserDefaultsManager().add(data)
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             if betanoTimerModel.isTimerEnd {
@@ -192,6 +202,7 @@ struct BetanoTimerView: View {
                 }
                 .onAppear {
                     UserDefaultsManager().addPoints(betanoTimerModel.points)
+                    saveTimer()
                 }
                 .fullScreenCover(isPresented: $betanoTimerModel.isSpin) {
                     BetanoSpinView()

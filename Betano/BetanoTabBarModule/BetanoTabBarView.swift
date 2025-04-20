@@ -13,6 +13,8 @@ struct BetanoTabBarView: View {
                     BetanoSettingsView()
                 } else if selectedTab == .Profile {
                     BetanoProfileView()
+                } else if selectedTab == .Stats {
+                    BetanoStatisticsView()
                 }
             }
             .frame(maxHeight: .infinity)

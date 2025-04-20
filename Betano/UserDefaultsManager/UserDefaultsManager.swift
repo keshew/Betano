@@ -2,6 +2,8 @@ import Foundation
 import SwiftUI
 
 class UserDefaultsManager: ObservableObject {
+    private let key = "statDataArray"
+    
     let precreatedModel = [TimerModel(name: "Basketball Practice", category: .precreated, icon: .basket, hour: "0", minute: "45"),
                            TimerModel(name: "Running Training", category: .precreated, icon: .run, hour: "0", minute: "30"),
                            TimerModel(name: "Soccer Training", category: .precreated, icon: .soccer, hour: "0", minute: "60"),
@@ -23,7 +25,29 @@ class UserDefaultsManager: ObservableObject {
         
         return false
     }
-
+    
+    //MARK: -
+    func save(_ array: [StatData]) {
+         if let data = try? JSONEncoder().encode(array) {
+             UserDefaults.standard.set(data, forKey: key)
+         }
+     }
+     
+     func add(_ stat: StatData) {
+         var current = fetch()
+         current.append(stat)
+         save(current)
+     }
+     
+     func fetch() -> [StatData] {
+         guard let data = UserDefaults.standard.data(forKey: key),
+               let array = try? JSONDecoder().decode([StatData].self, from: data) else {
+             return []
+         }
+         return array
+     }
+    //MARK: -
+    
     func incrementTimersCompleted() {
         var timersCompleted = UserDefaults.standard.integer(forKey: "timersCompleted")
         timersCompleted += 1
